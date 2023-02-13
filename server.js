@@ -1,5 +1,6 @@
 const express = require('express')
 const path = require('path')
+const fs = require('fs')
 const { readFromFile, readAndAppend} = require('./helpers/fsUtils')
 const uuid = require('./helpers/uuid')
 const app = express()
@@ -27,27 +28,72 @@ app.get('/api/notes', (req, res) => {
     readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)))
 })
 
-//post request 
 app.post('/api/notes', (req, res) => {
-res.json(`${req.method} request received`)
+    console.info(`${req.method} request recieved`)
 
-    const { title, text} = req.body;
+    const { title, text } = req.body
 
-    if (req.body) {
+
+    if (title && text) {
+
         const newNote = {
             title,
             text,
-            tip_id: uuid(),
+            tip_id: uuid()
         }
 
-        readAndAppend(newNote, './db/db.json')
-        console.log(`Note added successfully!`)
-    } else {
-        console.log(`Error in adding note!`)
-    }
+        fs.readFile('./db/db.json', 'utf8', (err, data) => {
+            if (err) {
+                console.error(err)
+            } else {
+                const parsedNotes = JSON.parse(data)                
+                parsedNotes.push(newNote)
 
-})
+                const noteString = JSON.stringify(parsedNotes, null, 2);
+
+                fs.writeFile('./db/db.json', noteString, (err) =>
+                    err
+                    ? console.error(err)
+                    : console.log(`Note for ${newNote.title} has been written to the JSON file!`)
+                
+                )
+            }
+        })
+
+        const response = {
+            status: 'success',
+            body: newNote,
+        }
+        console.log(response)
+        res.status(201).json(response)
+    }else{
+        res.status(500).json('Error in posting note!')
+    }
+}); 
+
 
 
 app.listen(PORT, () =>
 console.log(`App is listening at http://localhost:${PORT}`))
+
+
+//post request 
+// app.post('/api/notes', (req, res) => {
+//     res.json(`${req.method} request received`)
+    
+//         const { title, text} = req.body;
+    
+//         if (req.body) {
+//             const newNote = {
+//                 title,
+//                 text,
+//                 tip_id: uuid(),
+//             }
+    
+//             readAndAppend(newNote, './db/db.json')
+//             console.log(`Note added successfully!`)
+//         } else {
+//             console.log(`Error in adding note!`)
+//         }
+    
+//     })
