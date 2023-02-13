@@ -1,7 +1,6 @@
 const express = require('express')
 const path = require('path')
 const fs = require('fs')
-const { readFromFile, readAndAppend} = require('./helpers/fsUtils')
 const uuid = require('./helpers/uuid')
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -28,8 +27,6 @@ app.get('/api/notes', (req, res) => {
     fs.readFile('./db/db.json', (err, data) => {
         if(err) throw err;
         res.json(JSON.parse(data))
-
-
     })
 });
 
