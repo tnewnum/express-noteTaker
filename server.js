@@ -25,8 +25,13 @@ res.sendFile(path.join(__dirname, '/public/notes.html' ))
 
 //get route for db.json
 app.get('/api/notes', (req, res) => {
-    readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)))
-})
+    fs.readFile('./db/db.json', (err, data) => {
+        if(err) throw err;
+        res.json(JSON.parse(data))
+
+
+    })
+});
 
 app.post('/api/notes', (req, res) => {
     console.info(`${req.method} request recieved`)
@@ -75,25 +80,3 @@ app.post('/api/notes', (req, res) => {
 
 app.listen(PORT, () =>
 console.log(`App is listening at http://localhost:${PORT}`))
-
-
-//post request 
-// app.post('/api/notes', (req, res) => {
-//     res.json(`${req.method} request received`)
-    
-//         const { title, text} = req.body;
-    
-//         if (req.body) {
-//             const newNote = {
-//                 title,
-//                 text,
-//                 tip_id: uuid(),
-//             }
-    
-//             readAndAppend(newNote, './db/db.json')
-//             console.log(`Note added successfully!`)
-//         } else {
-//             console.log(`Error in adding note!`)
-//         }
-    
-//     })
