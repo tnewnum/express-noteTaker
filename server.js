@@ -4,6 +4,8 @@ const fs = require('fs')
 const uuid = require('./helpers/uuid')
 const app = express()
 const PORT = process.env.PORT || 3001
+let db = require('./db/db.json')
+
 
 //middleware?
 app.use(express.static('public'))
@@ -22,7 +24,7 @@ app.get('/notes', (req, res) =>
 res.sendFile(path.join(__dirname, '/public/notes.html' ))
 )
 
-//get route for db.json
+//renders saved notes to the left of the page
 app.get('/api/notes', (req, res) => {
     fs.readFile('./db/db.json', (err, data) => {
         if(err) throw err;
@@ -30,6 +32,7 @@ app.get('/api/notes', (req, res) => {
     })
 });
 
+//post the newley added note to the left of the page
 app.post('/api/notes', (req, res) => {
     console.info(`${req.method} request recieved`)
 
@@ -41,7 +44,7 @@ app.post('/api/notes', (req, res) => {
         const newNote = {
             title,
             text,
-            tip_id: uuid()
+            id: uuid()
         }
 
         fs.readFile('./db/db.json', 'utf8', (err, data) => {
@@ -75,5 +78,43 @@ app.post('/api/notes', (req, res) => {
 
 
 
+//trying to get a note to delete
+app.delete('/api/notes/:id', (req, res) => {
+    
+//needs to get the user provided ID 
+const noteId = req.params.id 
+console.log(noteId)
+
+console.log(db)
+db = db.filter(function(note){
+
+    
+    return note.id !== noteId
+
+})
+
+console.log(db)
+fs.writeFile('./db/db.json', JSON.stringify(db), (err) =>
+
+    err
+    ? console.error(err)
+    : console.log(`Note deleted from the JSON file!`)
+               
+    )
+
+res.sendStatus(200)
+
+})
+
+
+
+
+//wild card to catch any bad route request
+app.get("*", (req, res) => {
+    res.send("Sorry, this page doesn't exist.");
+  });
+  
+
+//listening to start the port at launch
 app.listen(PORT, () =>
 console.log(`App is listening at http://localhost:${PORT}`))
