@@ -93,6 +93,8 @@ db = db.filter(function(note){
 
 })
 
+
+
 console.log(db)
 fs.writeFile('./db/db.json', JSON.stringify(db), (err) =>
 
