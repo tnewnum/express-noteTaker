@@ -7,13 +7,12 @@ const PORT = process.env.PORT || 3001
 let db = require('./db/db.json')
 
 
-//middleware?
+//middleware used 
 app.use(express.static('public'))
-app.use(express.json())
-//allows express to understand : in the route 
+app.use(express.json()) 
 app.use(express.urlencoded({extended: true}))
 
-//res.render("idex")
+
 //get route for homepage
 app.get('/', (req, res) =>
 res.sendFile(path,join(__dirname, '/public/index.html'))
@@ -31,6 +30,8 @@ app.get('/api/notes', (req, res) => {
         res.json(JSON.parse(data))
     })
 });
+
+
 
 //post the newley added note to the left of the page
 app.post('/api/notes', (req, res) => {
@@ -78,33 +79,27 @@ app.post('/api/notes', (req, res) => {
 
 
 
-//trying to get a note to delete
+//route to delete a note 
 app.delete('/api/notes/:id', (req, res) => {
     
-//needs to get the user provided ID 
-const noteId = req.params.id 
-console.log(noteId)
-
-console.log(db)
-db = db.filter(function(note){
-
+    //needs to get the user provided ID 
+    const noteId = req.params.id 
+    console.log(noteId)
+    console.log(db) 
     
-    return note.id !== noteId
+    db = db.filter(function(note){    
+        return note.id !== noteId
 
-})
-
-
-
-console.log(db)
-fs.writeFile('./db/db.json', JSON.stringify(db), (err) =>
-
+    })
+    console.log(db)
+    
+    fs.writeFile('./db/db.json', JSON.stringify(db), (err) =>
     err
     ? console.error(err)
-    : console.log(`Note deleted from the JSON file!`)
-               
+    : console.log(`Note deleted from the JSON file!`)               
     )
 
-res.sendStatus(200)
+    res.sendStatus(200)
 
 })
 
@@ -114,7 +109,7 @@ res.sendStatus(200)
 //wild card to catch any bad route request
 app.get("*", (req, res) => {
     res.send("Sorry, this page doesn't exist.");
-  });
+});
   
 
 //listening to start the port at launch
