@@ -1,6 +1,6 @@
 # epress-noteTaker
 
-No License at this time
+
 
 ## 📘 Description
 
@@ -28,7 +28,7 @@ An application that allows you to write and save notes so that you can organize 
 
 ## 🔒 License
 
-This project is coverd under the No License at this time!
+This project is not coverd under a License at this time!
 
 ## 🤝 Credits
 
